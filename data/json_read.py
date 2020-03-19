@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import json
 
-with open('db_read\sensor-app-json2.json') as json_data:
+with open('data\sensor-app-json2.json') as json_data:
     data2=json.load(json_data)
 
-with open('db_read\sensor-app-json.json') as json_data:
+with open('data\sensor-app-json.json') as json_data:
     data=json.load(json_data)
 
 def proccess_data(sensor_values, sensor_timestamps):
