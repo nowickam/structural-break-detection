@@ -17,12 +17,14 @@ def MDL(parameter_tuple):
 
     term3=term4=0
 
-    for i in range(len(breakpoints)):
+    for i in range(1,len(breakpoints)-1):
         ni=breakpoints[i][0]-breakpoints[i-1][0]
         term3+=(breakpoints[i][1]+2)/2*math.log(ni,2)
 
-        var=np.var(breakpoints[i][1])
-        term4+=ni/2*math.log(2*math.pi*var,2)
+        # TODO estimate the white noise variance
+        # var=np.var(breakpoints[i][1])
+        # print(2*math.pi*var)
+        term4+=ni/2*math.log(2*math.pi*1,2)
     
     terms.append(term3)
     terms.append(term4)
@@ -38,4 +40,5 @@ def make_mdl_parameters(m,chromosone):
     for i in range(n):
         if chromosone[i]!=-1:
             breakpoints.append((i,chromosone[i]))
+    #number of breaks, length of data, (time,ar-order) tuple
     return (m,n,breakpoints)

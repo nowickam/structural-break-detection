@@ -4,12 +4,12 @@ import numpy as np
 
 from .mdl import *
 
-generations=50
-SIZE = 20
-n = 10    #length of the data
-chromosones=[]
-p=3         #AR order, later random
-rand.seed(0)
+# generations=50
+# SIZE = 20
+# n = 10    #length of the data
+# chromosones=[]
+# p=3         #AR order, later random
+# rand.seed(0)
 
 # #Objective function
 # def MDL(parameter_tuple):
@@ -26,7 +26,7 @@ rand.seed(0)
 #     return (m,n,breakpoints)
 
 #Map parameters onto a chromosone
-def make_chromosone(m):
+def make_chromosone(n,m,p):
     #fill with n -1
     chromosone=np.full((1,n),-1)[0]
     #mark m genes with p AR order
@@ -39,12 +39,12 @@ def make_chromosone(m):
     return (mdl,chromosone)
 
 #Start with an initial set of chromosomes
-def make_first_generation():
+def make_first_generation(n, generation_size,p):
     chromosones = []
-    for i in range(SIZE):
+    for i in range(generation_size):
         #various number of breaks
         m=int(rand.uniform(1,n/2))
-        chromosones.append(make_chromosone(m))
+        chromosones.append(make_chromosone(n,m,p))
     return chromosones
 
 #Apply objective function to an individual
@@ -81,7 +81,7 @@ def random_choice(sorted_chromosones):
     return sorted_chromosones[j]
 
 #Produce offspring by taking genes (parameters of MDL function) from both parents at random 
-def crossover(parent_1, parent_2):
+def crossover(parent_1, parent_2,n):
     m=int(rand.uniform(1,n/2))
     chromosone=[]
 
@@ -96,7 +96,7 @@ def crossover(parent_1, parent_2):
     return (mdl,chromosone)
 
 #Produce offspring by: taking a gene from parent || changing own gene
-def mutation(parent):
+def mutation(parent,n,p):
     m=int(rand.uniform(1,n/2))
     chromosone=[]
     pi1=rand.uniform(0,1)
@@ -114,22 +114,23 @@ def mutation(parent):
     mdl=apply_function(m,chromosone)
     return (mdl,chromosone)
 
-def make_next_generation(previous_chromosones):
+def make_next_generation(previous_chromosones,n,generation_size,p):
     next_generation=[]
     sorted_chromosones=sort_chromosones(previous_chromosones)
     pi=rand.uniform(0,1)
 
-    for i in range(SIZE):
+    for i in range(generation_size):
         choice=rand.uniform(0,1)
         if(choice<pi):
+            #choose two parents - until they are different
             parent_1=random_choice(sorted_chromosones)
             parent_2=random_choice(sorted_chromosones)
             while parent_1==parent_2:
                 parent_2=random_choice(sorted_chromosones)
-            next_generation.append(crossover(parent_1,parent_2))
+            next_generation.append(crossover(parent_1,parent_2,n))
         else:
             parent=random_choice(sorted_chromosones)
-            next_generation.append(mutation(parent))
+            next_generation.append(mutation(parent,n,p))
     return next_generation
 
 # chromosones=make_first_generation()
