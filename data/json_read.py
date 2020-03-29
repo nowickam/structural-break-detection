@@ -68,22 +68,22 @@ def plot_data(title,x_values,y_values,z_values,xyz_values,multiple_plots):
     ax = plt.axes()
     ax.xaxis.set_major_locator(ticker.MultipleLocator(500))
 
-data_list=[data['gyroscope']['2020-2-15'],data['accelerometer']['2020-2-15'],
-            data2['gyroscope']['2020-2-17'],data2['accelerometer']['2020-2-17']]
-names_list=[('gyroscope','2020-2-15'),('accelerometer','2020-2-15'),
-            ('gyroscope','2020-2-17'),('accelerometer','2020-2-17')]
+# data_list=[data['gyroscope']['2020-2-15'],data['accelerometer']['2020-2-15'],
+#             data2['gyroscope']['2020-2-17'],data2['accelerometer']['2020-2-17']]
+# names_list=[('gyroscope','2020-2-15'),('accelerometer','2020-2-15'),
+#             ('gyroscope','2020-2-17'),('accelerometer','2020-2-17')]
 
-for data,name in zip(data_list,names_list):
-    gyro_values=data.values()
-    gyro_timestamps=data.keys()
+# for data,name in zip(data_list,names_list):
+#     gyro_values=data.values()
+#     gyro_timestamps=data.keys()
 
-    gx_values, gy_values, gz_values,gxyz_values=proccess_data(gyro_values,gyro_timestamps)
+#     gx_values, gy_values, gz_values,gxyz_values=proccess_data(gyro_values,gyro_timestamps)
 
-    plot_data("Records from "+name[0]+", "+name[1],gx_values,gy_values,gz_values,gxyz_values,False)
-    plt.xlabel("ms")
-    if name[0]=='gyroscope':
-        plt.ylabel("rad/s")
-    else:
-        plt.ylabel("g (=9.8m/s)")
+#     plot_data("Records from "+name[0]+", "+name[1],gx_values,gy_values,gz_values,gxyz_values,False)
+#     plt.xlabel("ms")
+#     if name[0]=='gyroscope':
+#         plt.ylabel("rad/s")
+#     else:
+#         plt.ylabel("g (=9.8m/s)")
 
-plt.show()
+# plt.show()

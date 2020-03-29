@@ -130,20 +130,20 @@ def make_next_generation(previous_chromosones):
             next_generation.append(mutation(parent))
     return next_generation
 
-chromosones=make_first_generation()
-print(chromosones)
-print("\n")
+# chromosones=make_first_generation()
+# print(chromosones)
+# print("\n")
 
-i=1 
-while i<generations:
-    print("GENERATION ",i)
+# i=1 
+# while i<generations:
+#     print("GENERATION ",i)
     
-    sorted_chromosones=sort_chromosones(chromosones)
+#     sorted_chromosones=sort_chromosones(chromosones)
 
-    for gene in chromosones:
-        print(gene)
-    print("\n")
-    chromosones=make_next_generation(chromosones)
-    i+=1
+#     for gene in chromosones:
+#         print(gene)
+#     print("\n")
+#     chromosones=make_next_generation(chromosones)
+#     i+=1
 
 
