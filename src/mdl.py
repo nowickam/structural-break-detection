@@ -9,22 +9,25 @@ def MDL(parameter_tuple):
     breakpoints=parameter_tuple[2]
 
     terms=[]
-    terms[0]=math.log(m,2)
+    terms.append(math.log(m,2))
 
-    terms[1]=m*math.log(n,2)
+    terms.append(m*math.log(n,2))
 
-    terms[2]=sum(math.log(i[1],2) for i in breakpoints)
+    terms.append(sum(math.log(i[1],2) for i in breakpoints))
 
-    terms[3]=terms[4]=0
+    term3=term4=0
 
-    for i in len(breakpoints):
+    for i in range(len(breakpoints)):
         ni=breakpoints[i][0]-breakpoints[i-1][0]
-        terms[3]+=(breakpoints[i][1]+2)/2*math.log(ni,2)
+        term3+=(breakpoints[i][1]+2)/2*math.log(ni,2)
 
         var=np.var(breakpoints[i][1])
-        terms[4]+=ni/2*math.log(2*math.pi*var,2)
+        term4+=ni/2*math.log(2*math.pi*var,2)
+    
+    terms.append(term3)
+    terms.append(term4)
 
-    terms[5]=n/2
+    terms.append(n/2)
 
     return sum(terms) 
 

@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import json
 
-with open('data\sensor-app-json2.json') as json_data:
-    data2=json.load(json_data)
+# with open('data\sensor-app-json2.json') as json_data:
+#     data2=json.load(json_data)
 
-with open('data\sensor-app-json.json') as json_data:
-    data=json.load(json_data)
+# with open('data\sensor-app-json.json') as json_data:
+#     data=json.load(json_data)
 
 def proccess_data(sensor_values, sensor_timestamps):
     x_values={}
@@ -16,12 +16,14 @@ def proccess_data(sensor_values, sensor_timestamps):
     z_values={}
     xyz_values={}
 
+    #divide the values into separate x, y and z arrays
     for value,timestamp in zip(sensor_values,sensor_timestamps):
         x_values[timestamp]=value['x']
         y_values[timestamp]=value['y']
         z_values[timestamp]=value['z']
         xyz_values[timestamp]=np.abs(value['x'])+np.abs(value['y'])+np.abs(value['z'])
 
+    #calculate the standard deviations
     x_mean=np.mean(list(x_values.values()))
     x_std=np.std(list(x_values.values()))
 
@@ -34,6 +36,7 @@ def proccess_data(sensor_values, sensor_timestamps):
     xyz_mean=np.mean(list(xyz_values.values()))
     xyz_std=np.std(list(xyz_values.values()))
 
+    #and delete the outliers
     for timestamp in list(x_values.keys()):
         if (np.abs(x_mean-x_values[timestamp])>x_std or np.abs(y_mean-y_values[timestamp])>y_std or 
         np.abs(z_mean-z_values[timestamp])>z_std or np.abs(xyz_mean-xyz_values[timestamp])>xyz_std):
@@ -50,6 +53,7 @@ def plot_data(title,x_values,y_values,z_values,xyz_values,multiple_plots):
     fig=plt.figure()
     plt.title(title)
 
+    #if plot separately x, y and z
     if multiple_plots:
         x,y=zip(*x_values.items())
         plt.plot(x,y)
@@ -60,6 +64,7 @@ def plot_data(title,x_values,y_values,z_values,xyz_values,multiple_plots):
         x,y=zip(*z_values.items())
         plt.plot(x,y)
 
+    #plot only the sum
     x,y=zip(*xyz_values.items())
     plt.plot(x,y)
 

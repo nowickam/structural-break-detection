@@ -2,6 +2,8 @@ import random as rand
 import math
 import numpy as np
 
+from .mdl import *
+
 generations=50
 SIZE = 20
 n = 10    #length of the data
