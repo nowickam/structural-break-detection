@@ -9,22 +9,23 @@ chromosones=[]
 p=3         #AR order, later random
 rand.seed(0)
 
-#Objective function
-def MDL(parameter_tuple):
-    #for now
-    return rand.uniform(0,10)
+# #Objective function
+# def MDL(parameter_tuple):
+#     #for now
+#     return rand.uniform(0,10)
 
-#parameters usable by MDL function
-def make_mdl_parameters(m,chromosone):
-    breakpoints=[]
-    for i in range(len(chromosone)):
-        if chromosone[i]!=-1:
-            breakpoints.append((i,chromosone[i]))
-    return (m,breakpoints)
+# #parameters usable by MDL function
+# def make_mdl_parameters(m,chromosone):
+#     breakpoints=[]
+#     n=len(chromosone)
+#     for i in range(n):
+#         if chromosone[i]!=-1:
+#             breakpoints.append((i,chromosone[i]))
+#     return (m,n,breakpoints)
 
 #Map parameters onto a chromosone
 def make_chromosone(m):
-    #fill with -1
+    #fill with n -1
     chromosone=np.full((1,n),-1)[0]
     #mark m genes with p AR order
     for i in range(m):
