@@ -16,16 +16,15 @@ acc_timestamps=data.keys()
 
 x_values, y_values, z_values,xyz_values=dr.proccess_data(acc_values,acc_timestamps)
 
-
 generations=50
-generation_size = 20
+generation_size = 10
 n = len(xyz_values)    #length of the data
 chromosones=[]
 ar_order=3         #AR order, later random
 rand.seed(0)
 
 
-chromosones=ga.make_first_generation(n,generation_size,ar_order)
+chromosones=ga.make_first_generation(n,generation_size,ar_order,xyz_values)
 # print(chromosones)
 # print("\n")
 
@@ -38,7 +37,7 @@ while i<generations:
     # for gene in chromosones:
     #     print(gene)
     # print("\n")
-    chromosones=ga.make_next_generation(chromosones,n,generation_size,ar_order)
+    chromosones=ga.make_next_generation(chromosones,n,generation_size,ar_order, xyz_values)
     i+=1
 
 for gene in chromosones:

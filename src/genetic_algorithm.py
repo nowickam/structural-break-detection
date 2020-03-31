@@ -4,52 +4,47 @@ import numpy as np
 
 from .mdl import *
 
-# generations=50
-# SIZE = 20
-# n = 10    #length of the data
-# chromosones=[]
-# p=3         #AR order, later random
-# rand.seed(0)
-
-# #Objective function
-# def MDL(parameter_tuple):
-#     #for now
-#     return rand.uniform(0,10)
-
-# #parameters usable by MDL function
-# def make_mdl_parameters(m,chromosone):
-#     breakpoints=[]
-#     n=len(chromosone)
-#     for i in range(n):
-#         if chromosone[i]!=-1:
-#             breakpoints.append((i,chromosone[i]))
-#     return (m,n,breakpoints)
+MAX_M=20
 
 #Map parameters onto a chromosone
-def make_chromosone(n,m,p):
+def make_chromosone(n,m,p,data):
     #fill with n -1
     chromosone=np.full((1,n),-1)[0]
+    j_values=[]
+    #first break at 0
+    chromosone[0]=p
     #mark m genes with p AR order
     for i in range(m):
+        #breaks cannot be closer to themselves than th ar order
         j=int(rand.uniform(0,n))
-        while(chromosone[j]!=-1):
-            j=int(rand.uniform(0,n))
+        search=True
+        while search:
+            if chromosone[j]==-1:
+                for k in range(j-p,j+p):
+                    if k in j_values:
+                         j=int(rand.uniform(0,n))
+                         break
+                search=False
+                j_values.append(j)
+
         chromosone[j]=p
-    mdl=apply_function(m,chromosone)
+    mdl=apply_function(m,chromosone,data)
     return (mdl,chromosone)
 
 #Start with an initial set of chromosomes
-def make_first_generation(n, generation_size,p):
+def make_first_generation(n, generation_size,p, data):
     chromosones = []
+    print("GENERATION 0")
     for i in range(generation_size):
         #various number of breaks
-        m=int(rand.uniform(1,n/2))
-        chromosones.append(make_chromosone(n,m,p))
+        m=int(rand.uniform(1,MAX_M))
+        print("CHROMOSONE: ",i, "BREAKS: ",m)
+        chromosones.append(make_chromosone(n,m,p,data))
     return chromosones
 
 #Apply objective function to an individual
-def apply_function(m,chromosone):
-    mdl=MDL(make_mdl_parameters(m,chromosone))
+def apply_function(m,chromosone, data):
+    mdl=MDL(make_mdl_parameters(m,chromosone),data)
     return mdl
 
 #Sort according to the values of objective function (ascending)
@@ -81,40 +76,53 @@ def random_choice(sorted_chromosones):
     return sorted_chromosones[j]
 
 #Produce offspring by taking genes (parameters of MDL function) from both parents at random 
-def crossover(parent_1, parent_2,n):
-    m=int(rand.uniform(1,n/2))
+def crossover(parent_1, parent_2,n,data):
+    m=int(rand.uniform(1,MAX_M))
     chromosone=[]
+    #wait for order time for the next possible order 
+    wait=0
 
     for i in range(n):
         choice=rand.uniform(0,1)
-        if choice < 0.5:
+        if choice < 0.5 and wait<=0:
             chromosone.append(parent_1[1][i])
-        else:
+            wait=parent_1[1][i]+1
+        elif choice >= 0.5 and wait<=0:
             chromosone.append(parent_2[1][i])
+            wait=parent_2[1][i]+1
+        else:
+            chromosone.append(-1)
+            wait=0
+        wait-=1
 
-    mdl=apply_function(m,chromosone)
+    mdl=apply_function(m,chromosone,data)
     return (mdl,chromosone)
 
 #Produce offspring by: taking a gene from parent || changing own gene
-def mutation(parent,n,p):
-    m=int(rand.uniform(1,n/2))
+def mutation(parent,n,p,data):
+    m=int(rand.uniform(1,MAX_M))
     chromosone=[]
     pi1=rand.uniform(0,1)
     pi2=rand.uniform(0,1-pi1)
+    wait=0
 
     for i in range(n):
         choice=rand.uniform(0,1)
-        if choice < pi1:
+        if choice < pi1 and wait<=0:
             chromosone.append(parent[1][i])
-        elif choice<pi1+pi2:
-            chromosone.append(-1)
-        else:
+            wait=parent[1][i]+1
+        elif choice>pi1+pi2:
             chromosone.append(p)
+            wait=p+1
+        else:
+            chromosone.append(-1)
+            wait=0
+        wait-=1
 
-    mdl=apply_function(m,chromosone)
+    mdl=apply_function(m,chromosone,data)
     return (mdl,chromosone)
 
-def make_next_generation(previous_chromosones,n,generation_size,p):
+def make_next_generation(previous_chromosones,n,generation_size,p, data):
     next_generation=[]
     sorted_chromosones=sort_chromosones(previous_chromosones)
     pi=rand.uniform(0,1)
@@ -127,26 +135,9 @@ def make_next_generation(previous_chromosones,n,generation_size,p):
             parent_2=random_choice(sorted_chromosones)
             while parent_1==parent_2:
                 parent_2=random_choice(sorted_chromosones)
-            next_generation.append(crossover(parent_1,parent_2,n))
+            next_generation.append(crossover(parent_1,parent_2,n,data))
         else:
             parent=random_choice(sorted_chromosones)
-            next_generation.append(mutation(parent,n,p))
+            next_generation.append(mutation(parent,n,p,data))
     return next_generation
-
-# chromosones=make_first_generation()
-# print(chromosones)
-# print("\n")
-
-# i=1 
-# while i<generations:
-#     print("GENERATION ",i)
-    
-#     sorted_chromosones=sort_chromosones(chromosones)
-
-#     for gene in chromosones:
-#         print(gene)
-#     print("\n")
-#     chromosones=make_next_generation(chromosones)
-#     i+=1
-
 
