@@ -18,10 +18,10 @@ def proccess_data(sensor_values, sensor_timestamps):
 
     #divide the values into separate x, y and z arrays
     for value,timestamp in zip(sensor_values,sensor_timestamps):
-        x_values[timestamp]=value['x']
-        y_values[timestamp]=value['y']
-        z_values[timestamp]=value['z']
-        xyz_values[timestamp]=np.abs(value['x'])+np.abs(value['y'])+np.abs(value['z'])
+        x_values[timestamp]=value['x']*1000
+        y_values[timestamp]=value['y']*1000
+        z_values[timestamp]=value['z']*1000
+        xyz_values[timestamp]=np.abs(value['x']*1000)+np.abs(value['y']*1000)+np.abs(value['z']*1000)
 
     #calculate the standard deviations
     x_mean=np.mean(list(x_values.values()))
@@ -89,6 +89,6 @@ def plot_data(title,x_values,y_values,z_values,xyz_values,multiple_plots):
 #     if name[0]=='gyroscope':
 #         plt.ylabel("rad/s")
 #     else:
-#         plt.ylabel("g (=9.8m/s)")
+#         plt.ylabel("g (=9800cm/s^2)")
 
 # plt.show()

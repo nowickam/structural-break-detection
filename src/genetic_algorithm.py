@@ -134,6 +134,7 @@ def make_next_generation(previous_chromosones,n,generation_size, data):
     pi=rand.uniform(0,1)
 
     for i in range(generation_size):
+        print("CHROMOSONE: ",i)
         choice=rand.uniform(0,1)
         if(choice<pi):
             #choose two parents - until they are different
