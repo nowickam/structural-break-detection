@@ -24,7 +24,7 @@ ar_order=3         #AR order, later random
 rand.seed(0)
 
 
-chromosones=ga.make_first_generation(n,generation_size,ar_order,xyz_values)
+chromosones=ga.make_first_generation(n,generation_size,xyz_values)
 # print(chromosones)
 # print("\n")
 
@@ -37,7 +37,7 @@ while i<generations:
     # for gene in chromosones:
     #     print(gene)
     # print("\n")
-    chromosones=ga.make_next_generation(chromosones,n,generation_size,ar_order, xyz_values)
+    chromosones=ga.make_next_generation(chromosones,n,generation_size, xyz_values)
     i+=1
 
 for gene in chromosones:

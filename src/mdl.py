@@ -30,7 +30,7 @@ def MDL(parameter_tuple, data):
 
         #print(datasection_values,breakpoints[i-1][1])
         rho,sigma=yule_walker(datasection_values,breakpoints[i-1][1])
-        print("START:",breakpoints[i-1][0],"END:",breakpoints[i][0]-1,sigma)
+        #print("START:",breakpoints[i-1][0],"END:",breakpoints[i][0]-1,sigma)
         term4+=ni/2*math.log(2*math.pi*math.pow(sigma,2),2)
     
     terms.append(term3)
