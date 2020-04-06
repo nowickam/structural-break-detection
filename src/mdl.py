@@ -30,13 +30,15 @@ def MDL(parameter_tuple, data):
 
         #print(datasection_values,breakpoints[i-1][1])
         rho,sigma=yule_walker(datasection_values,breakpoints[i-1][1])
-        #print("START:",breakpoints[i-1][0],"END:",breakpoints[i][0]-1,sigma)
+        print("START:",breakpoints[i-1][0],"END:",breakpoints[i][0]-1,sigma)
         term4+=ni/2*math.log(2*math.pi*math.pow(sigma,2),2)
     
     terms.append(term3)
     terms.append(term4)
 
     terms.append(n/2)
+
+    print("MDL: ",sum(terms))
 
     return sum(terms) 
 
@@ -47,6 +49,5 @@ def make_mdl_parameters(m,chromosone):
     for i in range(n):
         if chromosone[i]!=-1:
             breakpoints.append((i,chromosone[i]))
-    breakpoints.append((n,1))
     #number of breaks, length of data, (time,ar-order) tuple
     return (m,n,breakpoints)
