@@ -7,6 +7,8 @@ import src.genetic_algorithm as ga
 import src.mdl as mdl
 import data.json_read as dr
 
+rand.seed()
+
 with open('data\sensor-app-json2.json') as json_data:
     load_data=json.load(json_data)
     data=load_data['accelerometer']['2020-2-17']
@@ -23,7 +25,7 @@ chromosones=[]
 ar_order=3         #AR order, later random
 rand.seed(0)
 
-f=open("../output.txt","a")
+f=open("output.txt","a")
 f.write("GENERATION 0\n")
 
 chromosones=ga.make_first_generation(n,generation_size,xyz_values)
@@ -42,7 +44,7 @@ while i<generations:
     # for gene in chromosones:
     #     print(gene)
     # print("\n")
-    chromosones=ga.make_next_generation(sorted_chromosones,n,generation_size, xyz_values,f)
+    chromosones=ga.make_next_generation(chromosones,n,generation_size, xyz_values,f)
     i+=1
 
 result_chromosones=ga.sort_chromosones(chromosones)

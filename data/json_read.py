@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+import math
 import json
 
 # with open('data\sensor-app-json2.json') as json_data:
@@ -21,7 +22,7 @@ def proccess_data(sensor_values, sensor_timestamps):
         x_values[timestamp]=value['x']*1000
         y_values[timestamp]=value['y']*1000
         z_values[timestamp]=value['z']*1000
-        xyz_values[timestamp]=np.abs(value['x']*1000)+np.abs(value['y']*1000)+np.abs(value['z']*1000)
+        xyz_values[timestamp]=math.sqrt(math.pow(x_values[timestamp],2)+math.pow(y_values[timestamp],2)+math.pow(z_values[timestamp],2))
 
     #calculate the standard deviations
     x_mean=np.mean(list(x_values.values()))
@@ -39,7 +40,7 @@ def proccess_data(sensor_values, sensor_timestamps):
     #and delete the outliers
     for timestamp in list(x_values.keys()):
         if (np.abs(x_mean-x_values[timestamp])>x_std or np.abs(y_mean-y_values[timestamp])>y_std or 
-        np.abs(z_mean-z_values[timestamp])>z_std or np.abs(xyz_mean-xyz_values[timestamp])>xyz_std):
+        np.abs(z_mean-z_values[timestamp])>z_std or np.abs(xyz_mean-xyz_values[timestamp])>5*xyz_std):
             del x_values[timestamp]
             del y_values[timestamp]
             del z_values[timestamp]
@@ -49,29 +50,29 @@ def proccess_data(sensor_values, sensor_timestamps):
 
 
 
-def plot_data(title,x_values,y_values,z_values,xyz_values,multiple_plots):
-    fig=plt.figure()
-    plt.title(title)
+# def plot_data(title,x_values,y_values,z_values,xyz_values,multiple_plots):
+#     fig=plt.figure()
+#     plt.title(title)
 
-    #if plot separately x, y and z
-    if multiple_plots:
-        x,y=zip(*x_values.items())
-        plt.plot(x,y)
+#     #if plot separately x, y and z
+#     if multiple_plots:
+#         x,y=zip(*x_values.items())
+#         plt.plot(x,y)
 
-        x,y=zip(*y_values.items())
-        plt.plot(x,y)
+#         x,y=zip(*y_values.items())
+#         plt.plot(x,y)
 
-        x,y=zip(*z_values.items())
-        plt.plot(x,y)
+#         x,y=zip(*z_values.items())
+#         plt.plot(x,y)
 
-    #plot only the sum
-    x,y=zip(*xyz_values.items())
-    plt.plot(x,y)
+#     #plot only the sum
+#     x,y=zip(*xyz_values.items())
+#     plt.plot(x,y)
 
-    if multiple_plots:
-        plt.legend(('X','Y','Z','sum'))
-    ax = plt.axes()
-    ax.xaxis.set_major_locator(ticker.MultipleLocator(500))
+#     if multiple_plots:
+#         plt.legend(('X','Y','Z','sum'))
+#     ax = plt.axes()
+#     ax.xaxis.set_major_locator(ticker.MultipleLocator(500))
 
 # data_list=[data['gyroscope']['2020-2-15'],data['accelerometer']['2020-2-15'],
 #             data2['gyroscope']['2020-2-17'],data2['accelerometer']['2020-2-17']]
