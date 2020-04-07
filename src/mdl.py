@@ -10,7 +10,8 @@ def MDL(parameter_tuple, data):
     breakpoints=parameter_tuple[2]
 
     terms=[]
-    terms.append(math.log(m,2))
+    m_log=max(1,m)
+    terms.append(math.log(m_log,2))
 
     terms.append(m*math.log(n,2))
 

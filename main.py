@@ -7,7 +7,7 @@ import src.genetic_algorithm as ga
 import src.mdl as mdl
 import data.json_read as dr
 
-rand.seed()
+
 
 with open('data\sensor-app-json2.json') as json_data:
     load_data=json.load(json_data)
@@ -18,12 +18,12 @@ acc_timestamps=data.keys()
 
 x_values, y_values, z_values,xyz_values=dr.proccess_data(acc_values,acc_timestamps)
 
-generations=25
-generation_size = 10
+generations=50
+generation_size = 200
 n = len(xyz_values)    #length of the data
 chromosones=[]
 ar_order=3         #AR order, later random
-rand.seed(0)
+rand.seed()
 
 f=open("output.txt","a")
 f.write("GENERATION 0\n")

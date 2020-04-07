@@ -4,11 +4,12 @@ import numpy as np
 
 from .mdl import *
 
-MAX_M=20
+MAX_M=10
 #TODO randomize
 AR_ORDER=3
 TAB=6
 NEXT_GEN=5
+
 
 #Map parameters onto a chromosone
 def make_chromosone(n,m,data):
@@ -121,14 +122,16 @@ def crossover(parent_1, parent_2,n,m,data):
         #check if there are more breaks than the max number of breaks in a chromosone
         if chromosone[i+1]>-1:
             breaks+=1
-        if breaks>=m:
-            for j in range (i+1,n):
-                chromosone.append(-1)
-            break
+        # if breaks>=m:
+        #     for j in range (i+1,n):
+        #         chromosone.append(-1)
+        #     break
 
     #last break at n
     chromosone.append(AR_ORDER)
-    mdl=apply_function(m,chromosone,data)
+
+    print("BREAKS: ",breaks)
+    mdl=apply_function(breaks,chromosone,data)
     return (mdl,chromosone)
 
 #Produce offspring by: taking a gene from parent || changing own gene
@@ -136,8 +139,8 @@ def mutation(parent,n,m,data):
     print("MUTATION")
     p=AR_ORDER
     chromosone=[]
-    pi1=0.99 
-    pi2=0.005
+    pi1=0.9
+    pi2=0.0999
     wait=0
     breaks=0
 
@@ -158,15 +161,16 @@ def mutation(parent,n,m,data):
         wait-=1
         if chromosone[i+1]>-1:
             breaks+=1
-        if breaks>=m:
-            for j in range (i+1,n):
-                chromosone.append(-1)
-            break
+        # if breaks>=m:
+        #     for j in range (i+1,n):
+        #         chromosone.append(-1)
+        #     break
 
     #last break at n
     chromosone.append(AR_ORDER)
     
-    mdl=apply_function(m,chromosone,data)
+    print("BREAKS: ",breaks)
+    mdl=apply_function(breaks,chromosone,data)
     return (mdl,chromosone)
 
 def make_next_generation(previous_chromosones,n,generation_size, data,f):
@@ -177,7 +181,7 @@ def make_next_generation(previous_chromosones,n,generation_size, data,f):
     
     for i in range(generation_size):
         m=int(rand.uniform(1,MAX_M))
-        print("CHROMOSONE: ",i," BREAKS: ",m) 
+        print("CHROMOSONE: ",i)
         f.write("CHROMOSONE "+str(i)+"\n")
         choice=rand.uniform(0,1)
         if(choice<pi):
