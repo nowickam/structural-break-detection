@@ -4,197 +4,198 @@ import numpy as np
 
 from .mdl import *
 
-MAX_M=10
-#TODO randomize
-AR_ORDER=3
-TAB=6
-NEXT_GEN=5
+MAX_M = 20
+# TODO randomize
+AR_ORDER = 3
+TAB = 6
+NEXT_GEN = 10
 
 
-#Map parameters onto a chromosone
-def make_chromosone(n,m,data):
-    p=AR_ORDER
-    #fill with n -1
-    chromosone=np.full((1,n),-1)[0]
-    j_values=[]
-    #first break at 0
-    j_values.append(0)
-    j_values.append(n-1)
-    chromosone[0]=p
-    #mark m genes with p AR order
+# Map parameters onto a chromosome
+def make_chromosome(n, m, data):
+    p = AR_ORDER
+    # fill with n -1
+    chromosome = np.full((1, n), -1)[0]
+    j_values = [0, n - 1]
+    # first break at 0
+    chromosome[0] = p
+    # mark m genes with p AR order
     for i in range(m):
-        #breaks cannot be closer to themselves than th ar order
-        #j=int(rand.uniform(0,n))
-        search=True
+        # breaks cannot be closer to themselves than th ar order
+        # j=int(rand.uniform(0,n))
+        search = True
         while search:
-            search=False
-            j=int(rand.uniform(0,n))
-            if chromosone[j]==-1:
-                for k in range(j-p-TAB,j+p+TAB):
+            search = False
+            j = int(rand.uniform(0, n))
+            if chromosome[j] == -1:
+                for k in range(j-p-TAB, j+p+TAB):
                     if k in j_values:
-                        search=True
+                        search = True
                         break
         j_values.append(j)
 
-        chromosone[j]=p
-    #last break at n
-    chromosone[n-1]=p
-    mdl=apply_function(m,chromosone,data)
-    return (mdl,chromosone)
+        chromosome[j] = p
+    # last break at n
+    chromosome[n-1] = p
+    mdl_result = apply_function(m, chromosome, data)
+    return mdl_result, chromosome
 
-#Start with an initial set of chromosomes
+
+# Start with an initial set of chromosomes
 def make_first_generation(n, generation_size, data):
-    chromosones = []
+    chromosomes = []
     print("GENERATION 0")
     for i in range(generation_size):
-        #various number of breaks
-        m=int(rand.uniform(1,MAX_M))
-        print("CHROMOSONE: ",i, "BREAKS: ",m)
-        chromosones.append(make_chromosone(n,m,data))
-    return chromosones
+        # various number of breaks
+        m = int(rand.uniform(5, MAX_M))
+        print("CHROMOSOME: ", i, "BREAKS: ", m)
+        chromosomes.append(make_chromosome(n, m, data))
+    return chromosomes
 
-#Apply objective function to an individual
-def apply_function(m,chromosone, data):
-    mdl=MDL(make_mdl_parameters(m,chromosone),data)
-    return mdl
 
-#Sort according to the values of objective function (ascending)
-def sort_chromosones(chromosones):
-    chromosones.sort(key=lambda gene: gene[0])
-    return chromosones[:NEXT_GEN]
+# Apply objective function to an individual
+def apply_function(m, chromosome, data):
+    mdl_result = mdl(make_mdl_parameters(m, chromosome), data)
+    return mdl_result
 
-#Parent chromosomes are randomly selected (proportional to the rank of their objective function values)
-#Can choose one chromosone for mutation or two for crossover
-def random_choice(sorted_chromosones):
-    mdl_sum=0
 
-    for chromosone in sorted_chromosones:
-        mdl_sum+=1/chromosone[0]
+# Sort according to the values of objective function (ascending)
+def sort_chromosomes(chromosomes):
+    chromosomes.sort(key=lambda gene: gene[0])
+    return chromosomes[:NEXT_GEN]
 
-    probabilities=[]
 
-    for chromosone in sorted_chromosones:
-        probabilities.append(1/chromosone[0]/mdl_sum)
+# Parent chromosomes are randomly selected (proportional to the rank of their objective function values)
+# Can choose one chromosome for mutation or two for crossover
+def random_choice(sorted_chromosomes):
+    mdl_sum = 0
 
-    choice=rand.uniform(0,1)
-    j=0
-    acc=probabilities[j]
+    for chromosome in sorted_chromosomes:
+        mdl_sum += 1/chromosome[0]
 
-    while acc<choice:
-        j+=1
-        acc+=probabilities[j]
+    probabilities = []
 
-    return sorted_chromosones[j]
+    for chromosome in sorted_chromosomes:
+        probabilities.append(1/chromosome[0]/mdl_sum)
 
-#Produce offspring by taking genes (parameters of MDL function) from both parents at random 
-def crossover(parent_1, parent_2,n,m,data):
+    choice = rand.uniform(0, 1)
+    j = 0
+    acc = probabilities[j]
+
+    while acc < choice:
+        j += 1
+        acc += probabilities[j]
+
+    return sorted_chromosomes[j]
+
+
+# Produce offspring by taking genes (parameters of MDL function) from both parents at random
+def crossover(parent_1, parent_2, n, data):
     print("CROSSOVER")
-    chromosone=[]
-    #wait for order time for the next possible order 
-    wait=0
-    breaks=0
-    bias=0.2
+    chromosome = []
+    # wait for order time for the next possible order
+    breaks = 0
+    bias = 0.2
 
-    #first break at 0
-    chromosone.append(AR_ORDER)
-    wait=TAB*AR_ORDER
+    # first break at 0
+    chromosome.append(AR_ORDER)
+    wait = TAB*AR_ORDER
 
-    #choose with pi probability, when there is no p close, p is in the beginning and the end
+    # choose with pi probability, when there is no p close, p is in the beginning and the end
     for i in range(n):
-        choice=rand.uniform(0,1)
-        p1=parent_1[1][i]
-        p2=parent_2[1][i]
-        #it is easy to omit the order in parent so bias 
-        if(p1>-1):
-            choice-=bias
-        if(p2>-1):
-            choice+=bias
-        if choice < 0.5 and wait<=0 and i<n-p1-TAB:
-            chromosone.append(p1)
-            #max in a case it is -1 so that we dont have to wait unnecessarily
-            wait=max(0,p1+TAB*p1)
-        elif choice >= 0.5 and wait<=0 and i<n-p2-TAB:
-            chromosone.append(p2)
-            wait=max(0,p2+TAB*p2)
+        choice = rand.uniform(0, 1)
+        p1 = parent_1[1][i]
+        p2 = parent_2[1][i]
+        # it is easy to omit the order in parent so bias
+        if p1 > -1:
+            choice -= bias
+        if p2 > -1:
+            choice += bias
+        if choice < 0.5 and wait <= 0 and i < n-p1-TAB:
+            chromosome.append(p1)
+            # max in a case it is -1 so that we dont have to wait unnecessarily
+            wait = max(0, p1+TAB*p1)
+        elif choice >= 0.5 and wait <= 0 and i < n-p2-TAB:
+            chromosome.append(p2)
+            wait = max(0, p2+TAB*p2)
         else:
-            chromosone.append(-1)
-        wait-=1
-        #check if there are more breaks than the max number of breaks in a chromosone
-        if chromosone[i+1]>-1:
-            breaks+=1
+            chromosome.append(-1)
+        wait -= 1
+        # check if there are more breaks than the max number of breaks in a chromosome
+        if chromosome[i+1] > -1:
+            breaks += 1
         # if breaks>=m:
         #     for j in range (i+1,n):
-        #         chromosone.append(-1)
+        #         chromosome.append(-1)
         #     break
 
-    #last break at n
-    chromosone.append(AR_ORDER)
+    # last break at n
+    chromosome.append(AR_ORDER)
 
-    print("BREAKS: ",breaks)
-    mdl=apply_function(breaks,chromosone,data)
-    return (mdl,chromosone)
+    print("BREAKS: ", breaks)
+    mdl_result = apply_function(breaks, chromosome, data)
+    return mdl_result, chromosome
 
-#Produce offspring by: taking a gene from parent || changing own gene
-def mutation(parent,n,m,data):
+
+# Produce offspring by: taking a gene from parent || changing own gene
+def mutation(parent, n, data):
     print("MUTATION")
-    p=AR_ORDER
-    chromosone=[]
-    pi1=0.9
-    pi2=0.0999
-    wait=0
-    breaks=0
+    p = AR_ORDER
+    chromosome = []
+    pi1 = 0.9
+    pi2 = 0.0999
+    breaks = 0
 
-    #first break at 0
-    chromosone.append(AR_ORDER)
-    wait=TAB*AR_ORDER
+    # first break at 0
+    chromosome.append(AR_ORDER)
+    wait = TAB*AR_ORDER
 
     for i in range(n):
-        choice=rand.uniform(0,1)
-        if choice < pi1 and wait<=0 and i<n-p-TAB:
-            chromosone.append(parent[1][i])
-            wait=parent[1][i]+TAB*parent[1][i]
-        elif choice>pi1+pi2 and wait<=0 and i<n-p-TAB:
-            chromosone.append(p)
-            wait=p+TAB*p
+        choice = rand.uniform(0, 1)
+        if choice < pi1 and wait <= 0 and i < n-p-TAB:
+            chromosome.append(parent[1][i])
+            wait = parent[1][i]+TAB*parent[1][i]
+        elif choice > pi1+pi2 and wait <= 0 and i < n-p-TAB:
+            chromosome.append(p)
+            wait = p+TAB*p
         else:
-            chromosone.append(-1)
-        wait-=1
-        if chromosone[i+1]>-1:
-            breaks+=1
+            chromosome.append(-1)
+        wait -= 1
+        if chromosome[i+1] > -1:
+            breaks += 1
         # if breaks>=m:
         #     for j in range (i+1,n):
-        #         chromosone.append(-1)
+        #         chromosome.append(-1)
         #     break
 
-    #last break at n
-    chromosone.append(AR_ORDER)
+    # last break at n
+    chromosome.append(AR_ORDER)
     
-    print("BREAKS: ",breaks)
-    mdl=apply_function(breaks,chromosone,data)
-    return (mdl,chromosone)
+    print("BREAKS: ", breaks)
+    mdl_result = apply_function(breaks, chromosome, data)
+    return mdl_result, chromosome
 
-def make_next_generation(previous_chromosones,n,generation_size, data,f):
-    next_generation=[]
-    sorted_chromosones=sort_chromosones(previous_chromosones)
-    #crossover probability
-    pi=0.9 
+
+def make_next_generation(previous_chromosomes, n, generation_size, data, f):
+    next_generation = []
+    sorted_chromosomes = sort_chromosomes(previous_chromosomes)
+    f.write("TOP: "+str(sorted_chromosomes[0][0])+"\n"+str(sorted_chromosomes[0][1])+"\n")
+    # crossover probability
+    pi = 0.75
     
     for i in range(generation_size):
-        m=int(rand.uniform(1,MAX_M))
-        print("CHROMOSONE: ",i)
-        f.write("CHROMOSONE "+str(i)+"\n")
-        choice=rand.uniform(0,1)
-        if(choice<pi):
-            #choose two parents - until they are different
-            parent_1=random_choice(sorted_chromosones)
-            parent_2=random_choice(sorted_chromosones)
-            while parent_1==parent_2:
-                parent_2=random_choice(sorted_chromosones)
-            next_generation.append(crossover(parent_1,parent_2,n,m,data))
+        print("CHROMOSOME: ", i)
+        choice = rand.uniform(0, 1)
+        if choice < pi:
+            # choose two parents - until they are different
+            parent_1 = random_choice(sorted_chromosomes)
+            parent_2 = random_choice(sorted_chromosomes)
+            while parent_1 == parent_2:
+                parent_2 = random_choice(sorted_chromosomes)
+            next_generation.append(crossover(parent_1, parent_2, n, data))
         else:
-            parent=random_choice(sorted_chromosones)
-            next_generation.append(mutation(parent,n,m,data))
-        f.write("MDL: "+str(next_generation[i][0])+"\n")
-   
+            parent = random_choice(sorted_chromosomes)
+            next_generation.append(mutation(parent, n, data))
+
     return next_generation
 

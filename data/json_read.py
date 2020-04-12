@@ -11,43 +11,43 @@ import json
 # with open('data\sensor-app-json.json') as json_data:
 #     data=json.load(json_data)
 
-def proccess_data(sensor_values, sensor_timestamps):
-    x_values={}
-    y_values={}
-    z_values={}
-    xyz_values={}
 
-    #divide the values into separate x, y and z arrays
-    for value,timestamp in zip(sensor_values,sensor_timestamps):
-        x_values[timestamp]=value['x']*1000
-        y_values[timestamp]=value['y']*1000
-        z_values[timestamp]=value['z']*1000
-        xyz_values[timestamp]=math.sqrt(math.pow(x_values[timestamp],2)+math.pow(y_values[timestamp],2)+math.pow(z_values[timestamp],2))
+def process_data(sensor_values, sensor_timestamps):
+    x_values = {}
+    y_values = {}
+    z_values = {}
+    xyz_values = {}
 
-    #calculate the standard deviations
-    x_mean=np.mean(list(x_values.values()))
-    x_std=np.std(list(x_values.values()))
+    # divide the values into separate x, y and z arrays
+    for value, timestamp in zip(sensor_values, sensor_timestamps):
+        x_values[timestamp] = value['x']*1000
+        y_values[timestamp] = value['y']*1000
+        z_values[timestamp] = value['z']*1000
+        xyz_values[timestamp] = math.sqrt(math.pow(x_values[timestamp], 2)+math.pow(y_values[timestamp], 2)+math.pow(z_values[timestamp], 2))
 
-    y_mean=np.mean(list(y_values.values()))
-    y_std=np.std(list(y_values.values()))
+    # calculate the standard deviations
+    x_mean = np.mean(list(x_values.values()))
+    x_std = np.std(list(x_values.values()))
 
-    z_mean=np.mean(list(z_values.values()))
-    z_std=np.std(list(z_values.values()))
+    y_mean = np.mean(list(y_values.values()))
+    y_std = np.std(list(y_values.values()))
 
-    xyz_mean=np.mean(list(xyz_values.values()))
-    xyz_std=np.std(list(xyz_values.values()))
+    z_mean = np.mean(list(z_values.values()))
+    z_std = np.std(list(z_values.values()))
 
-    #and delete the outliers
+    xyz_mean = np.mean(list(xyz_values.values()))
+    xyz_std = np.std(list(xyz_values.values()))
+
+    # and delete the outliers
     for timestamp in list(x_values.keys()):
-        if (np.abs(x_mean-x_values[timestamp])>x_std or np.abs(y_mean-y_values[timestamp])>y_std or 
-        np.abs(z_mean-z_values[timestamp])>z_std or np.abs(xyz_mean-xyz_values[timestamp])>5*xyz_std):
+        if (np.abs(x_mean-x_values[timestamp]) > x_std or np.abs(y_mean-y_values[timestamp]) > y_std or
+        np.abs(z_mean-z_values[timestamp]) > z_std or np.abs(xyz_mean-xyz_values[timestamp]) > 5*xyz_std):
             del x_values[timestamp]
             del y_values[timestamp]
             del z_values[timestamp]
             del xyz_values[timestamp]
 
     return x_values, y_values, z_values, xyz_values
-
 
 
 # def plot_data(title,x_values,y_values,z_values,xyz_values,multiple_plots):
@@ -91,5 +91,4 @@ def proccess_data(sensor_values, sensor_timestamps):
 #         plt.ylabel("rad/s")
 #     else:
 #         plt.ylabel("g (=9800cm/s^2)")
-
 # plt.show()
