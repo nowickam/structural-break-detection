@@ -6,7 +6,7 @@ from .mdl import *
 
 MAX_M = 20
 # TODO randomize
-AR_ORDER = 3
+AR_ORDER = 1
 TAB = 6
 NEXT_GEN = 10
 
@@ -102,7 +102,7 @@ def crossover(parent_1, parent_2, n, data):
     wait = TAB*AR_ORDER
 
     # choose with pi probability, when there is no p close, p is in the beginning and the end
-    for i in range(n):
+    for i in range(n-2):
         choice = rand.uniform(0, 1)
         p1 = parent_1[1][i]
         p2 = parent_2[1][i]
@@ -150,7 +150,7 @@ def mutation(parent, n, data):
     chromosome.append(AR_ORDER)
     wait = TAB*AR_ORDER
 
-    for i in range(n):
+    for i in range(n-2):
         choice = rand.uniform(0, 1)
         if choice < pi1 and wait <= 0 and i < n-p-TAB:
             chromosome.append(parent[1][i])
@@ -180,6 +180,9 @@ def make_next_generation(previous_chromosomes, n, generation_size, data, f):
     next_generation = []
     sorted_chromosomes = sort_chromosomes(previous_chromosomes)
     f.write("TOP: "+str(sorted_chromosomes[0][0])+"\n"+str(sorted_chromosomes[0][1])+"\n")
+    # if there is just one chromosome repeating
+    if sorted_chromosomes.count(sorted_chromosomes[0]) == len(sorted_chromosomes):
+        return sorted_chromosomes
     # crossover probability
     pi = 0.75
     

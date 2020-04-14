@@ -20,10 +20,11 @@ def process_data(sensor_values, sensor_timestamps):
 
     # divide the values into separate x, y and z arrays
     for value, timestamp in zip(sensor_values, sensor_timestamps):
-        x_values[timestamp] = value['x']*1000
-        y_values[timestamp] = value['y']*1000
-        z_values[timestamp] = value['z']*1000
-        xyz_values[timestamp] = math.sqrt(math.pow(x_values[timestamp], 2)+math.pow(y_values[timestamp], 2)+math.pow(z_values[timestamp], 2))
+        x_values[timestamp] = value['x']
+        y_values[timestamp] = value['y']
+        z_values[timestamp] = value['z']
+        # xyz_values[timestamp] = math.sqrt(math.pow(x_values[timestamp], 2)+math.pow(y_values[timestamp], 2)+math.pow(z_values[timestamp], 2))
+        xyz_values[timestamp] = np.abs(value['x'])+np.abs(value['y'])+np.abs(value['z'])
 
     # calculate the standard deviations
     x_mean = np.mean(list(x_values.values()))
@@ -50,45 +51,66 @@ def process_data(sensor_values, sensor_timestamps):
     return x_values, y_values, z_values, xyz_values
 
 
-# def plot_data(title,x_values,y_values,z_values,xyz_values,multiple_plots):
+# def initial_plot_data(title,x_values,y_values,z_values,xyz_values,multiple_plots):
 #     fig=plt.figure()
 #     plt.title(title)
-
+#
 #     #if plot separately x, y and z
 #     if multiple_plots:
 #         x,y=zip(*x_values.items())
 #         plt.plot(x,y)
-
+#
 #         x,y=zip(*y_values.items())
 #         plt.plot(x,y)
-
+#
 #         x,y=zip(*z_values.items())
 #         plt.plot(x,y)
-
+#
 #     #plot only the sum
 #     x,y=zip(*xyz_values.items())
 #     plt.plot(x,y)
-
+#
 #     if multiple_plots:
 #         plt.legend(('X','Y','Z','sum'))
 #     ax = plt.axes()
 #     ax.xaxis.set_major_locator(ticker.MultipleLocator(500))
 
+
+def plot_data(title, values, timebreaks):
+    plt.figure()
+    plt.title(title)
+
+    x, y = zip(*values.items())
+    plt.plot(x, y)
+
+    for i,tbreak in zip(range(0,len(timebreaks)),timebreaks):
+        if tbreak != -1:
+            plt.axvline(list(values.keys())[i], c='r')
+
+    ax = plt.axes()
+    ax.xaxis.set_major_locator(ticker.MultipleLocator(500))
+    plt.xlabel("ms")
+    plt.ylabel("g (=9.8m/s^2)")
+    plt.show()
+
 # data_list=[data['gyroscope']['2020-2-15'],data['accelerometer']['2020-2-15'],
 #             data2['gyroscope']['2020-2-17'],data2['accelerometer']['2020-2-17']]
 # names_list=[('gyroscope','2020-2-15'),('accelerometer','2020-2-15'),
 #             ('gyroscope','2020-2-17'),('accelerometer','2020-2-17')]
-
+#
 # for data,name in zip(data_list,names_list):
 #     gyro_values=data.values()
 #     gyro_timestamps=data.keys()
-
+#
 #     gx_values, gy_values, gz_values,gxyz_values=proccess_data(gyro_values,gyro_timestamps)
-
-#     plot_data("Records from "+name[0]+", "+name[1],gx_values,gy_values,gz_values,gxyz_values,False)
+#
+#     init_plot_data("Records from "+name[0]+", "+name[1],gx_values,gy_values,gz_values,gxyz_values,False)
 #     plt.xlabel("ms")
 #     if name[0]=='gyroscope':
 #         plt.ylabel("rad/s")
 #     else:
 #         plt.ylabel("g (=9800cm/s^2)")
+
+
 # plt.show()
+
