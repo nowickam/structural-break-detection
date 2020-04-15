@@ -31,7 +31,7 @@ def mdl(parameter_tuple, data):
 
         # print(data_section_values,breakpoints[i-1][1])
         rho, sigma = yule_walker(data_section_values, breakpoints[i-1][1])
-        print("START:", breakpoints[i-1][0], "END:", breakpoints[i][0]-1, sigma)
+        print("START:", breakpoints[i-1][0], "END:", breakpoints[i][0]-1, "AR: ", breakpoints[i-1][1])
         var = math.pow(sigma, 2)
         term4 += ni/2*math.log(2*math.pi*var, 2)
     

@@ -19,7 +19,6 @@ generations = 50
 generation_size = 200
 n = len(xyz_values)    # length of the data
 chromosomes = []
-ar_order = 1         # AR order, later random
 rand.seed()
 
 f = open("output.txt", "a")
