@@ -27,7 +27,7 @@ def mdl(parameter_tuple, data):
         data_section_values=[]
 
         for j in range(breakpoints[i-1][0], breakpoints[i][0]-1):
-            data_section_values.append(list(data.values())[j])
+            data_section_values.append(data[1][j])
 
         # print(data_section_values,breakpoints[i-1][1])
         rho, sigma = yule_walker(data_section_values, breakpoints[i-1][1])

@@ -1,3 +1,5 @@
+# TODO: change units, przerzedź dane, hyperparameters
+
 import json
 import random as rand
 
@@ -5,20 +7,23 @@ import src.genetic_algorithm as ga
 import data.json_read as dr
 
 
-with open('data\sensor-app-json2.json') as json_data:
+with open('data\sensor-app-json3.json') as json_data:
     load_data = json.load(json_data)
     data = load_data['accelerometer']['2020-2-17']
 
 acc_values = data.values()
 acc_timestamps = data.keys()
 
-x_values, y_values, z_values, xyz_values = dr.process_data(acc_values, acc_timestamps)
+xyz_values = dr.process_json_data(acc_values, acc_timestamps)
+dr.plot_data("Accelerometer from 2020.03.17", xyz_values, [-1])
 
 
-generations = 50
-generation_size = 200
-n = len(xyz_values)    # length of the data
+
+generations = 20
+generation_size = 20
+n = len(xyz_values[0])    # length of the data
 chromosomes = []
+mdl_values = []
 rand.seed()
 
 f = open("output.txt", "a")
@@ -33,7 +38,7 @@ while i < generations:
     print("\nGENERATION ", i)
     f.write("\nGENERATION "+str(i)+"\n")
     
-    chromosomes = ga.make_next_generation(chromosomes, n, generation_size, xyz_values, f)
+    chromosomes = ga.make_next_generation(chromosomes, n, generation_size, xyz_values, f, mdl_values)
     i += 1
 
 result_chromosomes = ga.sort_chromosomes(chromosomes)
@@ -44,4 +49,5 @@ print("\n")
 f.close()
 
 
-dr.plot_data("Accelerometer from 2020.02.17", xyz_values, result_chromosomes[0][1])
+dr.plot_data("Accelerometer from 2020.03.17", xyz_values, result_chromosomes[0][1])
+dr.plot_convergence("Convergence of accelerometer from 2020.03.17", generations, mdl_values)

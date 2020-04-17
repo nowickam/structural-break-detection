@@ -113,11 +113,11 @@ def crossover(parent_1, parent_2, n, data):
         #     choice -= bias
         # if p2 > -1:
         #     choice += bias
-        if choice < 0.5 and wait <= 0 and i < n-p1-TAB:
+        if choice < 0.5 and wait <= 0 and i < n-2-p1-TAB:
             chromosome.append(p1)
             # max in a case it is -1 so that we dont have to wait unnecessarily
             wait = max(0, p1+TAB*p1)
-        elif choice >= 0.5 and wait <= 0 and i < n-p2-TAB:
+        elif choice >= 0.5 and wait <= 0 and i < n-2-p2-TAB:
             chromosome.append(p2)
             wait = max(0, p2+TAB*p2)
         else:
@@ -155,10 +155,10 @@ def mutation(parent, n, data):
 
     for i in range(n-2):
         choice = rand.uniform(0, 1)
-        if choice < pi1 and wait <= 0 and i < n-p-TAB:
+        if choice < pi1 and wait <= 0 and i < n-2-p-TAB:
             chromosome.append(parent[1][i])
             wait = parent[1][i]+TAB*parent[1][i]
-        elif choice > pi1+pi2 and wait <= 0 and i < n-p-TAB:
+        elif choice > pi1+pi2 and wait <= 0 and i < n-2-p-TAB:
             p = int(rand.uniform(1,5))
             chromosome.append(p)
             wait = p+TAB*p
@@ -181,9 +181,10 @@ def mutation(parent, n, data):
     return mdl_result, chromosome
 
 
-def make_next_generation(previous_chromosomes, n, generation_size, data, f):
+def make_next_generation(previous_chromosomes, n, generation_size, data, f, mdl_values):
     next_generation = []
     sorted_chromosomes = sort_chromosomes(previous_chromosomes)
+    mdl_values.append(sorted_chromosomes[0][0])
     f.write("TOP: "+str(sorted_chromosomes[0][0])+"\n"+str(sorted_chromosomes[0][1])+"\n")
     # if there is just one chromosome repeating
     if sorted_chromosomes.count(sorted_chromosomes[0]) == len(sorted_chromosomes):
@@ -206,4 +207,3 @@ def make_next_generation(previous_chromosomes, n, generation_size, data, f):
             next_generation.append(mutation(parent, n, data))
 
     return next_generation
-
