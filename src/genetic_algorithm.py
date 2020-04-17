@@ -5,8 +5,6 @@ import numpy as np
 from .mdl import *
 
 MAX_M = 20
-# TODO randomize
-AR_ORDER = 1
 TAB = 6
 NEXT_GEN = 10
 
@@ -22,8 +20,7 @@ def make_chromosome(n, m, data):
     # mark m genes with p AR order
     for i in range(m):
         p = int(rand.uniform(1,5))
-        # breaks cannot be closer to themselves than th ar order
-        # j=int(rand.uniform(0,n))
+        # breaks cannot be closer to themselves than the multiple of ar order
         search = True
         while search:
             search = False
@@ -108,11 +105,7 @@ def crossover(parent_1, parent_2, n, data):
         choice = rand.uniform(0, 1)
         p1 = parent_1[1][i]
         p2 = parent_2[1][i]
-        # it is easy to omit the order in parent so bias
-        # if p1 > -1:
-        #     choice -= bias
-        # if p2 > -1:
-        #     choice += bias
+
         if choice < 0.5 and wait <= 0 and i < n-2-p1-TAB:
             chromosome.append(p1)
             # max in a case it is -1 so that we dont have to wait unnecessarily
@@ -123,13 +116,6 @@ def crossover(parent_1, parent_2, n, data):
         else:
             chromosome.append(-1)
         wait -= 1
-        # check if there are more breaks than the max number of breaks in a chromosome
-        if chromosome[i+1] > -1:
-            breaks += 1
-        # if breaks>=m:
-        #     for j in range (i+1,n):
-        #         chromosome.append(-1)
-        #     break
 
     # last break at n
     p = int(rand.uniform(1,5))
@@ -165,12 +151,6 @@ def mutation(parent, n, data):
         else:
             chromosome.append(-1)
         wait -= 1
-        if chromosome[i+1] > -1:
-            breaks += 1
-        # if breaks>=m:
-        #     for j in range (i+1,n):
-        #         chromosome.append(-1)
-        #     break
 
     # last break at n
     p = int(rand.uniform(1,5))
@@ -185,9 +165,10 @@ def make_next_generation(previous_chromosomes, n, generation_size, data, f, mdl_
     next_generation = []
     sorted_chromosomes = sort_chromosomes(previous_chromosomes)
     mdl_values.append(sorted_chromosomes[0][0])
-    f.write("TOP: "+str(sorted_chromosomes[0][0])+"\n"+str(sorted_chromosomes[0][1])+"\n")
+    f.write("TOP: "+str(sorted_chromosomes[0][0])+"\n")
     # if there is just one chromosome repeating
     if sorted_chromosomes.count(sorted_chromosomes[0]) == len(sorted_chromosomes):
+        f.write("FINISHED\n")
         return sorted_chromosomes
     # crossover probability
     pi = 0.75

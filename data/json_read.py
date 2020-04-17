@@ -22,8 +22,8 @@ def process_json_data(sensor_values, sensor_timestamps):
     sum_q1 = np.percentile(sum_values[1], 25)
     sum_q3 = np.percentile(sum_values[1], 75)
 
-    sum_lower = sum_q1-1.5*(sum_q3-sum_q1)
-    sum_upper = sum_q3+1.5*(sum_q3-sum_q1)
+    sum_lower = sum_q1-2.5*(sum_q3-sum_q1)
+    sum_upper = sum_q3+2.5*(sum_q3-sum_q1)
 
     # delete outliers
     for i in range(0,len(sum_values[1])-1):
@@ -38,11 +38,9 @@ def process_json_data(sensor_values, sensor_timestamps):
     return sum_values
 
 
-def plot_data(title, values, timebreaks):
+def plot_data(title, save, values, timebreaks):
     plt.figure()
     plt.title(title)
-
-    values[0] = [int(time)/(1000*60*60) for time in values[0]]
 
     x, y = values[0], values[1]
     plt.plot(x, y)
@@ -53,12 +51,13 @@ def plot_data(title, values, timebreaks):
 
     ax = plt.axes()
     ax.xaxis.set_major_locator(ticker.MultipleLocator(0.5))
-    plt.xlabel("ms")
+    plt.xlabel("hours")
     plt.ylabel("g (=9.8m/s^2)")
+    plt.savefig("output/"+save, bbox_inches='tight')
     plt.show()
 
 
-def plot_convergence(title, generations, mdl_values):
+def plot_convergence(title, save, generations, mdl_values):
     plt.figure()
     plt.title(title)
 
@@ -72,4 +71,5 @@ def plot_convergence(title, generations, mdl_values):
 
     plt.xlabel("generation number")
     plt.ylabel("mdl value")
+    plt.savefig("output/"+save, bbox_inches='tight')
     plt.show()
