@@ -6,7 +6,6 @@ import time
 import src.genetic_algorithm as ga
 import data.json_read as dr
 
-dr.process_csv_data()
 
 date = "2020-2-17"
 test = ""
@@ -26,10 +25,10 @@ xyz_values = dr.process_json_data(acc_values, acc_timestamps)
 # change ms to hours
 xyz_values[0] = [int(time)/(1000*60*60) for time in xyz_values[0]]
 dr.plot_data("Accelerometer from "+date, date+test +
-             "/acc_"+date+".png", xyz_values, [-1])
+             "/acc_"+date+".png", xyz_values, {})
 
 generations = 50
-generation_size = 10
+generation_size = 200
 n = len(xyz_values[0])    # length of the data
 
 f = open("output/"+date+"/output.txt", "a")

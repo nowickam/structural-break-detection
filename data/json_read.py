@@ -15,8 +15,6 @@ import json
 
 
 def process_json_data(sensor_values, sensor_timestamps):
-    df=pd.read_json('data/sensor-app-json3')
-    vals=df['accelerometer']['2020-3-17']
     sum_values = []
     # timestamps
     sum_values.append([])
@@ -56,8 +54,7 @@ def plot_data(title, save, values, timebreaks):
     x, y = values[0], values[1]
     plt.plot(x, y)
 
-    for i, tbreak in zip(range(0, len(timebreaks)), timebreaks):
-        if tbreak != -1:
+    for i in timebreaks.keys():
             plt.axvline(values[0][i], c='r')
 
     ax = plt.axes()
