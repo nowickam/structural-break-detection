@@ -6,7 +6,17 @@ import math
 import json
 
 
+# def process_csv_data():
+#     eeg_fpz = pd.read_csv('data/woman33_eeg_fpz_cz', sep=";")
+#     fig = plt.figure(figsize=(20, 12))
+#     sum_values=eeg_fpz['EEG']
+    # plt.plot(eeg_fpz['EEG Pz-Oz[uV]'])
+    # plt.show
+
+
 def process_json_data(sensor_values, sensor_timestamps):
+    df=pd.read_json('data/sensor-app-json3')
+    vals=df['accelerometer']['2020-3-17']
     sum_values = []
     # timestamps
     sum_values.append([])
@@ -16,7 +26,8 @@ def process_json_data(sensor_values, sensor_timestamps):
     # divide the values into separate x, y and z arrays
     for value, timestamp in zip(sensor_values, sensor_timestamps):
         sum_values[0].append(timestamp)
-        sum_values[1].append(np.abs(value['x'])+np.abs(value['y'])+np.abs(value['z']))
+        sum_values[1].append(np.abs(value['x']) +
+                             np.abs(value['y'])+np.abs(value['z']))
 
     # calculate quantiles
     sum_q1 = np.percentile(sum_values[1], 25)
@@ -26,7 +37,7 @@ def process_json_data(sensor_values, sensor_timestamps):
     sum_upper = sum_q3+2.5*(sum_q3-sum_q1)
 
     # delete outliers
-    for i in range(0,len(sum_values[1])-1):
+    for i in range(0, len(sum_values[1])-1):
         if(sum_values[1][i] > sum_upper):
             sum_values[1][i] = sum_upper
         elif(sum_values[1][i] < sum_lower):
@@ -39,29 +50,29 @@ def process_json_data(sensor_values, sensor_timestamps):
 
 
 def plot_data(title, save, values, timebreaks):
-    plt.figure()
+    plt.figure(figsize=(20, 12))
     plt.title(title)
 
     x, y = values[0], values[1]
     plt.plot(x, y)
 
-    for i, tbreak in zip(range(0,len(timebreaks)),timebreaks):
+    for i, tbreak in zip(range(0, len(timebreaks)), timebreaks):
         if tbreak != -1:
-            plt.axvline(values[0][i], c = 'r')
+            plt.axvline(values[0][i], c='r')
 
     ax = plt.axes()
     ax.xaxis.set_major_locator(ticker.MultipleLocator(0.5))
     plt.xlabel("hours")
     plt.ylabel("g (=9.8m/s^2)")
     plt.savefig("output/"+save, bbox_inches='tight')
-    plt.show()
+    # plt.show()
 
 
 def plot_convergence(title, save, generations, mdl_values):
-    plt.figure()
+    plt.figure(figsize=(20, 12))
     plt.title(title)
 
-    args=list(range(1,generations))
+    args = list(range(1, generations))
 
     x, y = args, mdl_values
     plt.plot(x, y)
@@ -72,4 +83,4 @@ def plot_convergence(title, save, generations, mdl_values):
     plt.xlabel("generation number")
     plt.ylabel("mdl value")
     plt.savefig("output/"+save, bbox_inches='tight')
-    plt.show()
+    # plt.show()

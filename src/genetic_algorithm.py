@@ -67,14 +67,21 @@ def sort_chromosomes(chromosomes):
 # Can choose one chromosome for mutation or two for crossover
 def random_choice(sorted_chromosomes):
     mdl_sum = 0
-
-    for chromosome in sorted_chromosomes:
-        mdl_sum += 1/chromosome[0]
-
     probabilities = []
 
-    for chromosome in sorted_chromosomes:
-        probabilities.append(1/chromosome[0]/mdl_sum)
+    # minimize the mdl depending on its sign
+    if sorted_chromosomes[0][0]>0:
+        for chromosome in sorted_chromosomes:
+            mdl_sum += 1/chromosome[0]
+
+        for chromosome in sorted_chromosomes:
+            probabilities.append(1/chromosome[0]/mdl_sum)
+    else:
+        for chromosome in sorted_chromosomes:
+            mdl_sum += chromosome[0]
+
+        for chromosome in sorted_chromosomes:
+            probabilities.append(chromosome[0]/mdl_sum)
 
     choice = rand.uniform(0, 1)
     j = 0
