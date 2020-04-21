@@ -5,30 +5,26 @@ import time
 
 import src.genetic_algorithm as ga
 import data.json_read as dr
+import src.mdl as mdl
 
 
 date = "2020-2-17"
+device = "accelerometer"
 test = ""
 start = time.time()
 path = "data/sensor-app-json3.json"
 
-with open(path) as json_data:
-    load_data = json.load(json_data)
-    data = load_data['accelerometer'][date]
-
-acc_values = data.values()
-acc_timestamps = data.keys()
-
 os.makedirs("./output/"+date+test, exist_ok=True)
 
-xyz_values = dr.process_json_data(acc_values, acc_timestamps)
+acc_values, acc_timestamps = dr.open_json(path, device, date)
+xyz_values = dr.process_data(acc_values, acc_timestamps)
 # change ms to hours
 xyz_values[0] = [int(time)/(1000*60*60) for time in xyz_values[0]]
-dr.plot_data("Accelerometer from "+date, date+test +
-             "/acc_"+date+".png", xyz_values, {})
+# dr.plot_data("Accelerometer from "+date, date+test +
+#              "/acc_"+date+".png", xyz_values, {}, [])
 
-generations = 50
-generation_size = 200
+generations = 5
+generation_size = 10
 n = len(xyz_values[0])    # length of the data
 
 f = open("output/"+date+"/output.txt", "a")
@@ -63,10 +59,12 @@ print("\n")
 duration = time.time()-start
 print(duration)
 f.write("DURATION: "+str(duration))
-f.close()
 
+ar_params = mdl.get_ar_parameters(result_chromosomes[0][1], xyz_values)
 
 dr.plot_data("Accelerometer from "+date, date+test+"/acc_"+date+"_"+str(generations) +
-             "_"+str(generation_size)+".png", xyz_values, result_chromosomes[0][1])
+             "_"+str(generation_size)+"_ar.png", xyz_values, result_chromosomes[0][1], ar_params)
 dr.plot_convergence("Convergence of accelerometer from 2020.03.17", date+test+"/conv_" +
-                    date+"_"+str(generations)+"_"+str(generation_size)+".png", generations, mdl_values)
+                    date+"_"+str(generations)+"_"+str(generation_size)+"_ar.png", generations, mdl_values)
+
+f.close()

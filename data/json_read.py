@@ -13,8 +13,18 @@ import json
     # plt.plot(eeg_fpz['EEG Pz-Oz[uV]'])
     # plt.show
 
+def open_json(path, device,date):
+    with open(path) as json_data:
+        load_data = json.load(json_data)
+        data = load_data[device][date]
 
-def process_json_data(sensor_values, sensor_timestamps):
+    acc_values = data.values()
+    acc_timestamps = data.keys()
+
+    return acc_values, acc_timestamps
+
+
+def process_data(sensor_values, sensor_timestamps):
     sum_values = []
     # timestamps
     sum_values.append([])
@@ -46,15 +56,42 @@ def process_json_data(sensor_values, sensor_timestamps):
 
     return sum_values
 
+def ar_values(values, chromosome, ar_params):
+    y=[]
+    c=0
+    timestamps=list(chromosome.keys())
+    
+    for i in range(chromosome[timestamps[0]]):
+        y.append(values[1][i])
 
-def plot_data(title, save, values, timebreaks):
+    for i in range(1, len(timestamps)):
+        if i==1:
+            start = timestamps[i-1] + chromosome[timestamps[i-1]]
+        else:
+            start = timestamps[i-1]
+        for j in range(start, timestamps[i]):
+            val=0
+            for k in range(1, chromosome[timestamps[i-1]]+1):
+                val += ar_params[i-1][0][k-1]*values[1][j-k]
+            if j==start:
+                c=values[1][j]-val
+            y.append(val+c)
+    return y
+
+
+def plot_data(title, save, values, chromosome, ar_params):
     plt.figure(figsize=(20, 12))
     plt.title(title)
 
     x, y = values[0], values[1]
     plt.plot(x, y)
 
-    for i in timebreaks.keys():
+    res=ar_values(values, chromosome, ar_params)
+    x_ar, y_ar = values[0][0:len(res)], res
+    plt.plot(x_ar, y_ar)
+
+
+    for i in chromosome.keys():
             plt.axvline(values[0][i], c='r')
 
     ax = plt.axes()

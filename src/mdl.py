@@ -44,6 +44,23 @@ def mdl(m, n, breakpoints, data):
 
     return sum(terms) 
 
+def get_ar_parameters(breakpoints, data):
+    parameters=[]
+
+    timestamps = list(breakpoints.keys())
+    timestamps.sort()
+    
+    for i in range(1, len(breakpoints)):
+        data_section_values=[]
+
+        for j in range(timestamps[i-1], timestamps[i]-1):
+            data_section_values.append(data[1][j])
+
+        # print(data_section_values,breakpoints[i-1][1])
+        parameters.append(yule_walker(data_section_values, breakpoints[timestamps[i-1]]))
+
+    return parameters
+
 
 # parameters usable by MDL function
 def make_mdl_parameters(m, chromosome):
