@@ -43,14 +43,3 @@ def mdl(m, n, breakpoints, data):
     print("MDL: ", sum(terms))
 
     return sum(terms) 
-
-
-# parameters usable by MDL function
-def make_mdl_parameters(m, chromosome):
-    breakpoints = []
-    n = len(chromosome)
-    for i in range(n):
-        if chromosome[i] != -1:
-            breakpoints.append((i, chromosome[i]))
-    # number of breaks, length of data, (time,ar-order) tuple
-    return m, n, breakpoints

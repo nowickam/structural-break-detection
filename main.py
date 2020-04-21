@@ -8,27 +8,23 @@ import data.json_read as dr
 
 
 date = "2020-2-17"
+device = "accelerometer"
 test = ""
 start = time.time()
 path = "data/sensor-app-json3.json"
 
-with open(path) as json_data:
-    load_data = json.load(json_data)
-    data = load_data['accelerometer'][date]
-
-acc_values = data.values()
-acc_timestamps = data.keys()
-
 os.makedirs("./output/"+date+test, exist_ok=True)
 
-xyz_values = dr.process_json_data(acc_values, acc_timestamps)
+acc_values, acc_timestamps = dr.open_json(path, device, date)
+
+xyz_values = dr.process_data(acc_values, acc_timestamps)
 # change ms to hours
 xyz_values[0] = [int(time)/(1000*60*60) for time in xyz_values[0]]
 dr.plot_data("Accelerometer from "+date, date+test +
              "/acc_"+date+".png", xyz_values, {})
 
 generations = 50
-generation_size = 200
+generation_size = 50
 n = len(xyz_values[0])    # length of the data
 
 f = open("output/"+date+"/output.txt", "a")

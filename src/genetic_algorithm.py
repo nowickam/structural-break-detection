@@ -37,7 +37,6 @@ def make_chromosome(n, m, data):
 
         chromosome[j] = p
 
-    # mdl_result = apply_function(m, chromosome, data)
     mdl_result = mdl(m, n, chromosome, data)
     return mdl_result, chromosome
 
@@ -52,13 +51,7 @@ def make_first_generation(n, generation_size, data):
         print("CHROMOSOME: ", i, "BREAKS: ", m)
         chromosomes.append(make_chromosome(n, m, data))
     return chromosomes
-
-
-# # Apply objective function to an individual
-# def apply_function(m, chromosome, data):
-#     mdl_result = mdl(make_mdl_parameters(m, chromosome), data)
-#     return mdl_result
-
+    
 
 # Sort according to the values of objective function (ascending)
 def sort_chromosomes(chromosomes):
@@ -151,7 +144,6 @@ def mutation(parent, n, data):
     chromosome[0] = p
     wait = TAB*p
 
-    i = 1
     for i in range(1, n-2):
         choice = rand.uniform(0, 1)
         if choice < pi1 and wait <= 0 and i < n-2-p-TAB:
@@ -182,9 +174,14 @@ def make_next_generation(previous_chromosomes, n, generation_size, data, f, mdl_
     mdl_values.append(sorted_chromosomes[0][0])
     f.write("TOP: "+str(sorted_chromosomes[0][0])+"\n")
     # if there is just one chromosome repeating
-    if sorted_chromosomes.count(sorted_chromosomes[0]) == len(sorted_chromosomes):
-        f.write("FINISHED\n")
+    count = 0
+    for chromosome in sorted_chromosomes:
+        if chromosome[0] == sorted_chromosomes[0][0]:
+            count += 1 
+    if len(sorted_chromosomes) == count:
+        f.write("FINISHED")
         return sorted_chromosomes
+
     # crossover probability
     pi = 0.75
     

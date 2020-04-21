@@ -9,9 +9,8 @@ import json
 # def process_csv_data():
 #     eeg_fpz = pd.read_csv('data/woman33_eeg_fpz_cz', sep=";")
 #     fig = plt.figure(figsize=(20, 12))
-#     sum_values=eeg_fpz['EEG']
-    # plt.plot(eeg_fpz['EEG Pz-Oz[uV]'])
-    # plt.show
+#     plt.plot(eeg_fpz['EEG Pz-Cz[uV]'])
+#     plt.show
 
 
 def open_json(path, device,date):
