@@ -14,7 +14,18 @@ import json
     # plt.show
 
 
-def process_json_data(sensor_values, sensor_timestamps):
+def open_json(path, device,date):
+    with open(path) as json_data:
+        load_data = json.load(json_data)
+        data = load_data[device][date]
+
+    acc_values = data.values()
+    acc_timestamps = data.keys()
+
+    return acc_values, acc_timestamps
+
+
+def process_data(sensor_values, sensor_timestamps):
     sum_values = []
     # timestamps
     sum_values.append([])
@@ -45,7 +56,6 @@ def process_json_data(sensor_values, sensor_timestamps):
     sum_values[1] = sum_values[1][50:(len(sum_values[1])-50)]
 
     return sum_values
-
 
 def plot_data(title, save, values, timebreaks):
     plt.figure(figsize=(20, 12))
