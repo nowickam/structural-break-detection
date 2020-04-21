@@ -5,13 +5,14 @@ import numpy as np
 from .mdl import *
 
 MAX_M = 20
-TAB = 6
+TAB = 8
 NEXT_GEN = 10
+AR_ORDER_MAX = 4
 
 
 # Map parameters onto a chromosome
 def make_chromosome(n, m, data):
-    p = int(rand.uniform(1,5))
+    p = int(rand.uniform(1,AR_ORDER_MAX+1))
     # fill with n -1
     chromosome = {}
     j_values = [0, n - 1]
@@ -20,7 +21,7 @@ def make_chromosome(n, m, data):
     chromosome[n-1] = p
     # mark m genes with p AR order
     for i in range(m):
-        p = int(rand.uniform(1,5))
+        p = int(rand.uniform(1,AR_ORDER_MAX+1))
         # breaks cannot be closer to themselves than the multiple of ar order
         search = True
         while search:
@@ -94,13 +95,12 @@ def random_choice(sorted_chromosomes):
 def crossover(parent_1, parent_2, n, data):
     print("CROSSOVER")
     chromosome = {}
-    # wait for order time for the next possible order
     breaks = 0
-    bias = 0.2
 
     # first break at 0
-    p = int(rand.uniform(1,5))
+    p = int(rand.uniform(1,AR_ORDER_MAX+1))
     chromosome[0]=p
+    # wait for order time for the next possible order
     wait = TAB*p
 
     # choose with pi probability, when there is no p close, p is in the beginning and the end
@@ -123,7 +123,7 @@ def crossover(parent_1, parent_2, n, data):
             breaks += 1
 
     # last break at n
-    p = int(rand.uniform(1,5))
+    p = int(rand.uniform(1,AR_ORDER_MAX+1))
     chromosome[i] = p
 
     # print("BREAKS: ", breaks)
@@ -134,7 +134,7 @@ def crossover(parent_1, parent_2, n, data):
 # Produce offspring by: taking a gene from parent || changing own gene
 def mutation(parent, n, data):
     print("MUTATION")
-    p = int(rand.uniform(1,5))    
+    p = int(rand.uniform(1,AR_ORDER_MAX+1))    
     chromosome = {}
     pi1 = 0.9
     pi2 = 0.0999
@@ -152,7 +152,7 @@ def mutation(parent, n, data):
                 chromosome[i] = p
                 wait = p+TAB*p
         elif choice > pi1+pi2 and wait <= 0 and i < n-2-p-TAB:
-            p = int(rand.uniform(1,5))
+            p = int(rand.uniform(1,AR_ORDER_MAX+1))
             chromosome[i] = p
             wait = p+TAB*p
         wait -= 1

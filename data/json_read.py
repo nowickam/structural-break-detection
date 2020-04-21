@@ -6,25 +6,30 @@ import math
 import json
 
 
-# def process_csv_data():
-#     eeg_fpz = pd.read_csv('data/woman33_eeg_fpz_cz', sep=";")
-#     fig = plt.figure(figsize=(20, 12))
-#     plt.plot(eeg_fpz['EEG Pz-Cz[uV]'])
-#     plt.show
+def open_csv(path, values_name, timestamps_name):
+    csv_df = pd.read_csv(path, sep=";")
+    fig = plt.figure(figsize=(20, 12))
+    values = csv_df[values_name]
+    timestamps = csv_df[timestamps_name]
+    plt.plot(timestamps, values)
+    plt.savefig("output/csv.png", bbox_inches='tight')
+    # plt.show
+
+    return values, timestamps
 
 
-def open_json(path, device,date):
+def open_json(path, device, date):
     with open(path) as json_data:
         load_data = json.load(json_data)
         data = load_data[device][date]
 
-    acc_values = data.values()
-    acc_timestamps = data.keys()
+    values = data.values()
+    timestamps = data.keys()
 
-    return acc_values, acc_timestamps
+    return values, timestamps
 
 
-def process_data(sensor_values, sensor_timestamps):
+def process_data(values, timestamps):
     sum_values = []
     # timestamps
     sum_values.append([])
@@ -32,7 +37,7 @@ def process_data(sensor_values, sensor_timestamps):
     sum_values.append([])
 
     # divide the values into separate x, y and z arrays
-    for value, timestamp in zip(sensor_values, sensor_timestamps):
+    for value, timestamp in zip(values, timestamps):
         sum_values[0].append(timestamp)
         sum_values[1].append(np.abs(value['x']) +
                              np.abs(value['y'])+np.abs(value['z']))
