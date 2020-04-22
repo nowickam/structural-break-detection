@@ -29,9 +29,7 @@ def mdl(m, n, breakpoints, data):
         for j in range(timestamps[i-1], timestamps[i]-1):
             data_section_values.append(data[1][j])
 
-        # print(data_section_values,breakpoints[i-1][1])
         rho, sigma = yule_walker(data_section_values, breakpoints[timestamps[i-1]])
-        print("START:", timestamps[i-1], "END:", timestamps[i]-1, "AR: ", breakpoints[timestamps[i-1]])
         var = math.pow(sigma, 2)
         term4 += ni/2*math.log(2*math.pi*var, 2)
     
@@ -39,7 +37,5 @@ def mdl(m, n, breakpoints, data):
     terms.append(term4)
 
     terms.append(n/2)
-
-    print("MDL: ", sum(terms))
 
     return sum(terms) 

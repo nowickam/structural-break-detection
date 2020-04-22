@@ -9,13 +9,20 @@ import json
 def open_csv(path, values_name, timestamps_name):
     csv_df = pd.read_csv(path, sep=";")
     fig = plt.figure(figsize=(20, 12))
-    values = csv_df[values_name]
-    timestamps = csv_df[timestamps_name]
+    values = csv_df[values_name].to_numpy()
+    if timestamps_name != None:
+        timestamps = csv_df[timestamps_name].to_numpy()
+    else:
+        timestamps = range(0,len(values))
     plt.plot(timestamps, values)
     plt.savefig("output/csv.png", bbox_inches='tight')
     # plt.show
 
-    return values, timestamps
+    sum_values = []
+    sum_values.append(timestamps)
+    sum_values.append(values)
+
+    return sum_values
 
 
 def open_json(path, device, date):
@@ -26,7 +33,7 @@ def open_json(path, device, date):
     values = data.values()
     timestamps = data.keys()
 
-    return values, timestamps
+    return process_data(values, timestamps)
 
 
 def process_data(values, timestamps):

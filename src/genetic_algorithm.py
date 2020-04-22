@@ -15,7 +15,6 @@ def make_chromosome(n, m, data):
     p = int(rand.uniform(1,AR_ORDER_MAX+1))
     # fill with n -1
     chromosome = {}
-    j_values = [0, n - 1]
     # first break at 0, last break at n
     chromosome[0]=p
     chromosome[n-1] = p
@@ -34,8 +33,6 @@ def make_chromosome(n, m, data):
                     if k in chromosome:
                         search = True
                         break
-        j_values.append(j)
-
         chromosome[j] = p
 
     mdl_result = mdl(m, n, chromosome, data)
@@ -49,7 +46,6 @@ def make_first_generation(n, generation_size, data):
     for i in range(generation_size):
         # various number of breaks
         m = int(rand.uniform(5, MAX_M))
-        print("CHROMOSOME: ", i, "BREAKS: ", m)
         chromosomes.append(make_chromosome(n, m, data))
     return chromosomes
     
@@ -93,7 +89,6 @@ def random_choice(sorted_chromosomes):
 
 # Produce offspring by taking genes (parameters of MDL function) from both parents at random
 def crossover(parent_1, parent_2, n, data):
-    print("CROSSOVER")
     chromosome = {}
     breaks = 0
 
@@ -133,7 +128,6 @@ def crossover(parent_1, parent_2, n, data):
 
 # Produce offspring by: taking a gene from parent || changing own gene
 def mutation(parent, n, data):
-    print("MUTATION")
     p = int(rand.uniform(1,AR_ORDER_MAX+1))    
     chromosome = {}
     pi1 = 0.9
@@ -173,11 +167,14 @@ def make_next_generation(previous_chromosomes, n, generation_size, data, f, mdl_
     sorted_chromosomes = sort_chromosomes(previous_chromosomes)
     mdl_values.append(sorted_chromosomes[0][0])
     f.write("TOP: "+str(sorted_chromosomes[0][0])+"\n")
-    # if there is just one chromosome repeating
+
+    # if there is just one chromosome repeating = converging
     count = 0
     for chromosome in sorted_chromosomes:
-        if chromosome[0] == sorted_chromosomes[0][0]:
-            count += 1 
+        if chromosome[0] != sorted_chromosomes[0][0]:
+            break
+        count += 1 
+
     if len(sorted_chromosomes) == count:
         f.write("FINISHED")
         return sorted_chromosomes
@@ -186,7 +183,6 @@ def make_next_generation(previous_chromosomes, n, generation_size, data, f, mdl_
     pi = 0.75
     
     for i in range(generation_size):
-        # print("CHROMOSOME: ", i)
         choice = rand.uniform(0, 1)
         if choice < pi:
             # choose two parents - until they are different
